@@ -1,0 +1,85 @@
+name: NSCT HEC Advisor Approval
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  approve-and-apply-correction:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+
+    outputs:
+      proceed_pr: ${{ steps.process.outputs.proceed_pr }}
+      commit_message: ${{ steps.process.outputs.commit_message }}
+      pr_title: ${{ steps.process.outputs.pr_title }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check repository privacy guidance
+        run: |
+          if [ "${{ github.event.repository.private }}" != "true" ]; then
+            echo "::warning title=Repository privacy guidance::This repository is public. NSCT_HEC handles student data, so use a private repository and avoid exposing raw CNIC in issues, comments, PRs, or files."
+            echo "## Privacy guidance" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Repository is currently public." >> "$GITHUB_STEP_SUMMARY"
+            echo "- NSCT_HEC should run in a private repository." >> "$GITHUB_STEP_SUMMARY"
+            echo "- Do not expose raw CNIC in issues, comments, PRs, or tracked files." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Process advisor approval comment
+        id: process
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/intake_manager.py process-approval \
+            --event "$GITHUB_EVENT_PATH" \
+            --repo-root "."
+
+      - name: Upload pending corrections artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsct-hec-after-approval-${{ github.event.issue.number }}
+          path: data/pending_corrections
+          if-no-files-found: ignore
+
+  create-pr:
+    needs: approve-and-apply-correction
+    if: needs.approve-and-apply-correction.outputs.proceed_pr == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: nsct-hec/correction-${{ github.event.issue.number }}-${{ github.run_id }}
+          commit-message: ${{ needs.approve-and-apply-correction.outputs.commit_message }}
+          title: ${{ needs.approve-and-apply-correction.outputs.pr_title }}
+          body: |
+            Advisor-approved correction applied from issue #${{ github.event.issue.number }}.
+
+            - Approval command used: `/approve-correction`
+            - Issue link: ${{ github.event.issue.html_url }}
+          labels: |
+            nsct-hec
+            advisor-approved
+          add-paths: |
+            data/master/students.csv
+            data/master/students.json
+            data/pending_corrections/

@@ -1,0 +1,96 @@
+name: "NSCT HEC - 02 Correction Request"
+description: "Request correction for an existing student record"
+title: "[NSCT Intake] Correction Request"
+labels: ["intake:correction", "status:awaiting-advisor"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Correction Policy
+        - Only for students already present in the master file.
+        - Advisor must approve by commenting: `/approve-correction`.
+
+  - type: input
+    id: existing_cnic
+    attributes:
+      label: Existing CNIC
+      description: "CNIC of student already in the master file"
+      placeholder: "35202-1234567-1"
+    validations:
+      required: true
+
+  - type: input
+    id: fields_to_correct
+    attributes:
+      label: Fields to Correct
+      description: "Comma-separated: full_name,program,session,roll_number,email,phone"
+      placeholder: "email,phone"
+    validations:
+      required: true
+
+  - type: input
+    id: corrected_full_name
+    attributes:
+      label: Corrected Full Name
+    validations:
+      required: false
+
+  - type: input
+    id: corrected_program
+    attributes:
+      label: Corrected Program
+    validations:
+      required: false
+
+  - type: input
+    id: corrected_session
+    attributes:
+      label: Corrected Session
+    validations:
+      required: false
+
+  - type: input
+    id: corrected_roll_number
+    attributes:
+      label: Corrected Roll Number
+    validations:
+      required: false
+
+  - type: input
+    id: corrected_email
+    attributes:
+      label: Corrected Email
+    validations:
+      required: false
+
+  - type: input
+    id: corrected_phone
+    attributes:
+      label: Corrected Phone
+    validations:
+      required: false
+
+  - type: textarea
+    id: reason_for_correction
+    attributes:
+      label: Reason for Correction
+      description: "Explain why correction is required"
+    validations:
+      required: true
+
+  - type: input
+    id: advisor_github
+    attributes:
+      label: Advisor GitHub Username
+      description: "Must match approver account"
+      placeholder: "advisor-username"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: declaration
+    attributes:
+      label: Declaration
+      options:
+        - label: "I confirm this request is genuine and supporting evidence can be provided when asked."
+          required: true

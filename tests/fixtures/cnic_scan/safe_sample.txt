@@ -1,0 +1,3 @@
+This fixture is safe for scanning.
+Masked CNIC example: xxxxx-xxxx1234
+Hash example: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

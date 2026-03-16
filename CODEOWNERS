@@ -1,0 +1,10 @@
+# Standalone NSCT_HEC governance
+/.github/** @MustafaHameed
+/config/** @MustafaHameed
+/data/** @MustafaHameed
+/docs/** @MustafaHameed
+/schemas/** @MustafaHameed
+/scripts/** @MustafaHameed
+/tests/** @MustafaHameed
+/README.md @MustafaHameed
+/requirements.txt @MustafaHameed

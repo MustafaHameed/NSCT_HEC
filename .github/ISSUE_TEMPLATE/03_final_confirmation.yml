@@ -1,0 +1,33 @@
+name: "NSCT HEC - 03 Final Confirmation"
+description: "Final confirmation step after data or correction handling"
+title: "[NSCT Intake] Final Confirmation"
+labels: ["intake:confirmation", "status:triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form only after you are asked by maintainers.
+
+  - type: input
+    id: related_issue
+    attributes:
+      label: Related Intake/Correction Issue Number
+      placeholder: "123"
+    validations:
+      required: true
+
+  - type: textarea
+    id: confirmation_note
+    attributes:
+      label: Confirmation Note
+      description: "Confirm whether submitted data/correction is now accurate"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: declaration
+    attributes:
+      label: Final Declaration
+      options:
+        - label: "I confirm this is final and accurate to the best of my knowledge."
+          required: true

@@ -1,0 +1,8 @@
+# Relative path globs excluded from raw-CNIC scanning
+.github/ISSUE_TEMPLATE/*
+scripts/test_harness.py
+scripts/test_cnic_guard.py
+tests/fixtures/**
+NSCT_HEC/scripts/test_harness.py
+NSCT_HEC/scripts/test_cnic_guard.py
+NSCT_HEC/tests/fixtures/**

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/nsct_hec/student.schema.json",
+  "title": "NSCT HEC Student Record",
+  "type": "object",
+  "required": [
+    "student_id",
+    "cnic_hash",
+    "masked_cnic",
+    "full_name",
+    "program",
+    "session",
+    "advisor_github",
+    "status",
+    "created_at",
+    "updated_at",
+    "source_issue",
+    "source_type"
+  ],
+  "properties": {
+    "student_id": {
+      "type": "string",
+      "pattern": "^STU-[0-9]{6}$"
+    },
+    "cnic_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "masked_cnic": {
+      "type": "string",
+      "pattern": "^xxxxx-xxxx[0-9]{4}$"
+    },
+    "full_name": {
+      "type": "string",
+      "minLength": 2
+    },
+    "program": {
+      "type": "string",
+      "minLength": 2
+    },
+    "session": {
+      "type": "string",
+      "minLength": 4
+    },
+    "roll_number": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "advisor_github": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["submitted", "corrected"]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "source_issue": {
+      "type": "string"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["new_student", "correction"]
+    }
+  },
+  "additionalProperties": false
+}

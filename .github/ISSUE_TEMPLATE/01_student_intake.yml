@@ -1,0 +1,90 @@
+name: "NSCT HEC - 01 Student Intake"
+description: "Submit data for students not already in the NSCT_HEC master sheet"
+title: "[NSCT Intake] New Student"
+labels: ["intake:new", "status:new"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Important
+        - Submit only if student is **not already present**.
+        - CNIC is used as the authoritative unique key.
+        - Do not submit fake data.
+
+  - type: input
+    id: full_name
+    attributes:
+      label: Student Full Name
+      description: "Use official record spelling"
+      placeholder: "Muhammad Ali"
+    validations:
+      required: true
+
+  - type: input
+    id: cnic
+    attributes:
+      label: CNIC
+      description: "Format: 35202-1234567-1 or digits only"
+      placeholder: "35202-1234567-1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: program
+    attributes:
+      label: Program
+      options:
+        - BSIT
+        - ADP
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: session
+    attributes:
+      label: Session
+      placeholder: "2024-2028"
+    validations:
+      required: true
+
+  - type: input
+    id: roll_number
+    attributes:
+      label: Roll Number
+      placeholder: "BSIT-24-001"
+    validations:
+      required: false
+
+  - type: input
+    id: email
+    attributes:
+      label: Email
+      placeholder: "student@example.com"
+    validations:
+      required: false
+
+  - type: input
+    id: phone
+    attributes:
+      label: Phone
+      placeholder: "+923001234567"
+    validations:
+      required: false
+
+  - type: input
+    id: advisor_github
+    attributes:
+      label: Advisor GitHub Username
+      description: "Without @"
+      placeholder: "advisor-username"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: declaration
+    attributes:
+      label: Declaration
+      options:
+        - label: "I confirm this student is not already in the record and information is correct."
+          required: true

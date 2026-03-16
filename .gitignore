@@ -1,0 +1,9 @@
+# Source Excel files may contain raw CNIC and should remain local only
+DIT Data BSIT & ADP2.xlsx
+*.xlsx
+
+# Python cache / local env
+__pycache__/
+*.pyc
+.venv/
+venv/

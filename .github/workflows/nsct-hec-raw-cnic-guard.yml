@@ -1,0 +1,55 @@
+name: NSCT HEC Raw CNIC Guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/**'
+      - 'config/**'
+      - 'data/**'
+      - 'docs/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'README.md'
+      - 'requirements.txt'
+      - 'CODEOWNERS'
+  pull_request:
+    paths:
+      - '.github/**'
+      - 'config/**'
+      - 'data/**'
+      - 'docs/**'
+      - 'schemas/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'README.md'
+      - 'requirements.txt'
+      - 'CODEOWNERS'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detect-raw-cnic:
+    runs-on: ubuntu-latest
+    env:
+      CNIC_SCAN_MODE: fail
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Scan tracked files for raw CNIC-like patterns
+        run: |
+          python scripts/cnic_leak_guard.py \
+            --repo-root . \
+            --tracked-only \
+            --allowlist config/cnic_scan_allowlist.txt \
+            --mode "$CNIC_SCAN_MODE"
