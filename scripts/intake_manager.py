@@ -66,7 +66,19 @@ def has_label(issue_labels: List[Dict], name: str) -> bool:
     return any((item.get("name") or "") == name for item in issue_labels)
 
 
-def process_issue_event(event: Dict, repo_root: Path, pepper: str) -> ActionResult:
+def resolve_advisor_login() -> str:
+    configured = (os.getenv("NSCT_DEFAULT_ADVISOR") or "").strip().lstrip("@")
+    if configured:
+        return configured
+
+    repository = (os.getenv("GITHUB_REPOSITORY") or "").strip()
+    if "/" in repository:
+        return repository.split("/", 1)[0]
+
+    return "advisor"
+
+
+def process_issue_event(event: Dict, repo_root: Path, pepper: str, advisor_login: str) -> ActionResult:
     issue = event.get("issue", {})
     issue_number = int(issue.get("number", 0))
     issue_author = (issue.get("user", {}) or {}).get("login", "")
@@ -74,15 +86,15 @@ def process_issue_event(event: Dict, repo_root: Path, pepper: str) -> ActionResu
     labels = issue.get("labels", [])
 
     if has_label(labels, "intake:new"):
-        return process_new_student_issue(repo_root, issue_number, issue_author, issue_body, pepper)
+        return process_new_student_issue(repo_root, issue_number, issue_author, issue_body, pepper, advisor_login)
 
     if has_label(labels, "intake:correction"):
-        return process_correction_request_issue(repo_root, issue_number, issue_author, issue_body, pepper)
+        return process_correction_request_issue(repo_root, issue_number, issue_author, issue_body, pepper, advisor_login)
 
     return ActionResult(False, False, "Issue is not labeled for NSCT intake processing.")
 
 
-def process_approval_comment_event(event: Dict, repo_root: Path) -> ActionResult:
+def process_approval_comment_event(event: Dict, repo_root: Path, advisor_login: str) -> ActionResult:
     issue = event.get("issue", {})
     issue_number = int(issue.get("number", 0))
     issue_labels = issue.get("labels", [])
@@ -96,7 +108,7 @@ def process_approval_comment_event(event: Dict, repo_root: Path) -> ActionResult
     if comment_body != "/approve-correction":
         return ActionResult(False, False, "Approval comment ignored: command token not matched.")
 
-    return apply_approved_correction(repo_root, issue_number, approver)
+    return apply_approved_correction(repo_root, issue_number, approver, advisor_login)
 
 
 def parse_args() -> argparse.Namespace:
@@ -118,11 +130,12 @@ def main() -> int:
 
     event = json.loads(event_path.read_text(encoding="utf-8"))
     pepper = os.getenv("CNIC_PEPPER", "")
+    advisor_login = resolve_advisor_login()
 
     if args.command == "process-issue":
-        result = process_issue_event(event, repo_root, pepper)
+        result = process_issue_event(event, repo_root, pepper, advisor_login)
     else:
-        result = process_approval_comment_event(event, repo_root)
+        result = process_approval_comment_event(event, repo_root, advisor_login)
 
     print(result.message)
     write_outputs(result)

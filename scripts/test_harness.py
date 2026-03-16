@@ -11,6 +11,7 @@ from intake_core import apply_approved_correction, process_correction_request_is
 def run_harness() -> None:
     root = Path(__file__).resolve().parents[1]
     pepper = "dev-pepper-for-tests"
+    advisor_login = "MustafaHameed"
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         sandbox = Path(tmp_dir) / "NSCT_HEC"
@@ -36,9 +37,6 @@ ali@example.com
 
 ### Phone
 +923001112233
-
-### Advisor GitHub Username
-advisor-1
 """
 
         result_new = process_new_student_issue(
@@ -47,6 +45,7 @@ advisor-1
             issue_author="student-user",
             issue_body=new_issue_body,
             pepper=pepper,
+            advisor_login=advisor_login,
         )
         assert result_new.valid and result_new.proceed_pr, result_new.message
 
@@ -56,6 +55,7 @@ advisor-1
             issue_author="student-user",
             issue_body=new_issue_body,
             pepper=pepper,
+            advisor_login=advisor_login,
         )
         assert not duplicate_result.valid, "Duplicate should fail"
 
@@ -73,9 +73,6 @@ ali.updated@example.com
 
 ### Reason for Correction
 Typo in contact details.
-
-### Advisor GitHub Username
-advisor-1
 """
 
         correction_result = process_correction_request_issue(
@@ -84,6 +81,7 @@ advisor-1
             issue_author="student-user",
             issue_body=correction_body,
             pepper=pepper,
+            advisor_login=advisor_login,
         )
         assert correction_result.valid and correction_result.proceed_pr, correction_result.message
 
@@ -91,13 +89,15 @@ advisor-1
             repo_root=sandbox,
             issue_number=201,
             approver_login="other-advisor",
+            advisor_login=advisor_login,
         )
         assert not denied_approval.valid, "Mismatched advisor should fail"
 
         approved_approval = apply_approved_correction(
             repo_root=sandbox,
             issue_number=201,
-            approver_login="advisor-1",
+            approver_login="MustafaHameed",
+            advisor_login=advisor_login,
         )
         assert approved_approval.valid and approved_approval.proceed_pr, approved_approval.message
 

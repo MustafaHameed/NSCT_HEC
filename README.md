@@ -46,7 +46,6 @@ This project implements a **GitHub-only** student intake and correction workflow
 - Planned standalone repo URL: `https://github.com/MustafaHameed/NSCT_HEC`
 - New student record: `https://github.com/MustafaHameed/NSCT_HEC/issues/new?template=01_student_intake.yml`
 - Update existing record: `https://github.com/MustafaHameed/NSCT_HEC/issues/new?template=02_correction_request.yml`
-- Final confirmation: `https://github.com/MustafaHameed/NSCT_HEC/issues/new?template=03_final_confirmation.yml`
 - These links become live after you create the standalone GitHub repository.
 
 ## One-command export

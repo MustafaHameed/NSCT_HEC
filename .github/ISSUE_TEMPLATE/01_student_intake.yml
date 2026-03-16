@@ -72,15 +72,6 @@ body:
     validations:
       required: false
 
-  - type: input
-    id: advisor_github
-    attributes:
-      label: Advisor GitHub Username
-      description: "Without @"
-      placeholder: "advisor-username"
-    validations:
-      required: true
-
   - type: checkboxes
     id: declaration
     attributes:

@@ -18,7 +18,7 @@
 ## 3) New Student Intake
 
 - New intake is accepted only if `cnic_hash` does not already exist.
-- Required fields: `full_name`, `cnic`, `program`, `session`, `advisor_github`.
+- Required fields: `full_name`, `cnic`, `program`, `session`.
 - At least one contact value is required: `email` or `phone`.
 
 ## 4) Correction Requests
@@ -26,7 +26,7 @@
 - Correction requests are allowed only for existing students.
 - Advisor approval is mandatory using issue comment command:
   - `/approve-correction`
-- The commenter username must match the advisor username in the request.
+- The commenter username must match the configured advisor account (`NSCT_DEFAULT_ADVISOR`), or repository owner when that variable is not set.
 
 ## 5) Verification and Audit
 

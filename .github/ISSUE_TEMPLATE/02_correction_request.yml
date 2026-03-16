@@ -8,7 +8,7 @@ body:
       value: |
         ### Correction Policy
         - Only for students already present in the master file.
-        - Advisor must approve by commenting: `/approve-correction`.
+        - Advisor approval will be done internally by the system owner.
 
   - type: input
     id: existing_cnic
@@ -75,15 +75,6 @@ body:
     attributes:
       label: Reason for Correction
       description: "Explain why correction is required"
-    validations:
-      required: true
-
-  - type: input
-    id: advisor_github
-    attributes:
-      label: Advisor GitHub Username
-      description: "Must match approver account"
-      placeholder: "advisor-username"
     validations:
       required: true
 

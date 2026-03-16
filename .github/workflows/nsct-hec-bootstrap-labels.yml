@@ -21,7 +21,6 @@ jobs:
             const labels = [
               { name: 'intake:new', color: '0e8a16', description: 'New student intake request' },
               { name: 'intake:correction', color: 'fbca04', description: 'Existing student correction request' },
-              { name: 'intake:confirmation', color: '1d76db', description: 'Final confirmation request' },
               { name: 'status:new', color: 'ededed', description: 'Newly submitted and not processed yet' },
               { name: 'status:validated', color: '0e8a16', description: 'Validation passed by workflow' },
               { name: 'status:needs-info', color: 'd93f0b', description: 'Submission needs more information' },

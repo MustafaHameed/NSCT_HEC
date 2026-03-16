@@ -37,7 +37,6 @@ ISSUE_FIELD_MAP = {
     "roll number": "roll_number",
     "email": "email",
     "phone": "phone",
-    "advisor github username": "advisor_github",
     "existing cnic": "existing_cnic",
     "fields to correct": "fields_to_correct",
     "corrected full name": "corrected_full_name",
@@ -182,7 +181,7 @@ def find_student_index(rows: List[Dict[str, str]], cnic_hash: str) -> int:
 
 def validate_new_issue(data: Dict[str, str]) -> List[str]:
     errors: List[str] = []
-    required_fields = ["full_name", "cnic", "program", "session", "advisor_github"]
+    required_fields = ["full_name", "cnic", "program", "session"]
 
     for field in required_fields:
         if not data.get(field):
@@ -200,7 +199,7 @@ def validate_new_issue(data: Dict[str, str]) -> List[str]:
 
 def validate_correction_issue(data: Dict[str, str]) -> List[str]:
     errors: List[str] = []
-    required_fields = ["existing_cnic", "fields_to_correct", "reason_for_correction", "advisor_github"]
+    required_fields = ["existing_cnic", "fields_to_correct", "reason_for_correction"]
 
     for field in required_fields:
         if not data.get(field):
@@ -223,6 +222,7 @@ def process_new_student_issue(
     issue_author: str,
     issue_body: str,
     pepper: str,
+    advisor_login: str,
 ) -> ActionResult:
     if not pepper:
         return ActionResult(False, False, "CNIC pepper secret is not configured.")
@@ -252,7 +252,7 @@ def process_new_student_issue(
         "roll_number": parsed.get("roll_number", ""),
         "email": parsed.get("email", ""),
         "phone": parsed.get("phone", ""),
-        "advisor_github": parsed.get("advisor_github", "").lstrip("@"),
+        "advisor_github": advisor_login,
         "status": "submitted",
         "created_at": now,
         "updated_at": now,
@@ -277,6 +277,7 @@ def process_correction_request_issue(
     issue_author: str,
     issue_body: str,
     pepper: str,
+    advisor_login: str,
 ) -> ActionResult:
     if not pepper:
         return ActionResult(False, False, "CNIC pepper secret is not configured.")
@@ -302,7 +303,7 @@ def process_correction_request_issue(
         "created_at": utc_now_iso(),
         "cnic_hash": cnic_hash,
         "masked_cnic": mask_cnic(cnic_normalized),
-        "advisor_github": parsed.get("advisor_github", "").lstrip("@"),
+        "advisor_github": advisor_login,
         "fields_to_correct": parse_correction_fields(parsed.get("fields_to_correct", "")),
         "proposed_changes": {
             "full_name": parsed.get("corrected_full_name", ""),
@@ -337,6 +338,7 @@ def apply_approved_correction(
     repo_root: Path,
     issue_number: int,
     approver_login: str,
+    advisor_login: str,
 ) -> ActionResult:
     students_csv, students_json, pending_dir = ensure_storage(repo_root)
     pending_file = pending_dir / f"issue-{issue_number}.json"
@@ -345,9 +347,9 @@ def apply_approved_correction(
         return ActionResult(False, False, f"No pending correction file exists for issue #{issue_number}.")
 
     payload = json.loads(pending_file.read_text(encoding="utf-8"))
-    advisor_expected = payload.get("advisor_github", "").lstrip("@").lower()
+    advisor_expected = payload.get("advisor_github", "").lstrip("@").lower() or advisor_login.lower()
     if approver_login.lower() != advisor_expected:
-        return ActionResult(False, False, "Advisor approval denied: commenter does not match requested advisor.")
+        return ActionResult(False, False, "Advisor approval denied: only the configured advisor account can approve corrections.")
 
     rows = load_students(students_csv)
     index = find_student_index(rows, payload.get("cnic_hash", ""))
